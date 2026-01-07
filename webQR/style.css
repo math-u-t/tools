@@ -57,6 +57,36 @@
     border-bottom: 2px solid var(--primary);
 }
 
+/* フォームグループ */
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.form-group select {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid var(--text-tertiary);
+    border-radius: 6px;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.form-group select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
 /* カメラコンテナ */
 .camera-container {
     position: relative;
@@ -71,6 +101,13 @@
 }
 
 #video-element {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+#screenshare-video {
     width: 100%;
     height: 100%;
     object-fit: cover;

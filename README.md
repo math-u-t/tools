@@ -19,6 +19,9 @@
 ### 📱 [webQR](webQR/README.md)
 カメラ、画像ファイル、画面キャプチャからQRコードを読み取ります。読み取り履歴を自動保存し、URLは直接開くことが可能です。
 
+### 🔐 [PGPbrowser](pgpbrowser/README.md)
+ブラウザでPGP公開鍵暗号を実行。OpenPGP標準に準拠した鍵ペア生成、テキスト・ファイルの暗号化・復号化がすべてローカル処理。秘密鍵の安全性を保証します。
+
 ---
 
 ## 🌐 アクセス方法
@@ -31,6 +34,7 @@
 - **hashMaster**: https://math-u-t.github.io/tools/hashMaster/
 - **audioChange**: https://math-u-t.github.io/tools/audioChange/
 - **webQR**: https://math-u-t.github.io/tools/webQR/
+- **PGPbrowser**: https://math-u-t.github.io/tools/pgpbrowser/
 
 ---
 
@@ -70,6 +74,7 @@
 ### 外部ライブラリ
 - **jsQR**: QRコード読み取り・デコード
 - **html2canvas**: スクリーンキャプチャ
+- **openpgp.js**: PGP暗号化・復号化
 
 ---
 
@@ -82,9 +87,7 @@
 | Safari | ✅ 完全対応 |
 | Opera | ✅ 完全対応 |
 
-**備考**: MediaAPI系機能（audioChange、webQR）はHTTPS環境またはlocalhostで動作します。
-
----
+**備考**: MediaAPI系機能（audioChange、webQR）はHTTPS環境またはlocalhostで動作します。---
 
 ## 📄 ライセンス
 

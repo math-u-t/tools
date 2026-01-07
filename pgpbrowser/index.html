@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PGPbrowser - PGP暗号化ツール</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <header>
+        <h1><a href="../index.html">🛠️ Tools</a></h1>
+        <p>PGP公開鍵暗号化ツール</p>
+    </header>
+
+    <main>
+        <section class="container">
+            <div class="page-header">
+                <h1>🔐 PGPbrowser</h1>
+                <p>PGP公開鍵暗号でテキスト・ファイルを暗号化・復号化</p>
+            </div>
+
+            <!-- タブナビゲーション -->
+            <div class="pgp-tabs">
+                <button class="pgp-tab active" data-tab="keygen">🔑 鍵生成</button>
+                <button class="pgp-tab" data-tab="encrypt">🔒 暗号化</button>
+                <button class="pgp-tab" data-tab="decrypt">🔓 復号化</button>
+                <button class="pgp-tab" data-tab="storage">💾 鍵管理</button>
+            </div>
+
+            <!-- タブ1: 鍵生成 -->
+            <section id="keygen-tab" class="pgp-section active">
+                <div class="section-title">🔑 PGP鍵ペア生成</div>
+                
+                <div class="form-group">
+                    <label>ユーザー名</label>
+                    <input type="text" id="key-name" placeholder="例: John Doe" value="My PGP Key">
+                </div>
+
+                <div class="form-group">
+                    <label>メールアドレス</label>
+                    <input type="email" id="key-email" placeholder="例: john@example.com" value="user@example.com">
+                </div>
+
+                <div class="form-group">
+                    <label>パスフレーズ（秘密鍵の保護）</label>
+                    <input type="password" id="key-passphrase" placeholder="セキュアなパスフレーズを入力">
+                    <small>秘密鍵を暗号化するためのパスワード</small>
+                </div>
+
+                <div class="form-group">
+                    <label>鍵の種類</label>
+                    <select id="key-type">
+                        <option value="rsa4096">RSA 4096ビット（高セキュリティ）</option>
+                        <option value="rsa2048">RSA 2048ビット（標準）</option>
+                        <option value="ecc">ECC（高速）</option>
+                    </select>
+                </div>
+
+                <button id="generate-key-btn" class="btn btn-primary btn-large">⚙️ 鍵ペアを生成</button>
+                <div id="keygen-status" class="status-text"></div>
+
+                <div id="keygen-result" class="key-result" style="display: none;">
+                    <div class="key-info">
+                        <div class="key-section">
+                            <h4>公開鍵（Public Key）</h4>
+                            <textarea id="public-key-output" readonly class="key-textarea"></textarea>
+                            <button class="btn btn-secondary copy-btn" onclick="copyToClipboard('public-key-output')">📋 公開鍵をコピー</button>
+                        </div>
+
+                        <div class="key-section">
+                            <h4>秘密鍵（Secret Key）</h4>
+                            <textarea id="secret-key-output" readonly class="key-textarea"></textarea>
+                            <button class="btn btn-secondary copy-btn" onclick="copyToClipboard('secret-key-output')">📋 秘密鍵をコピー</button>
+                        </div>
+                    </div>
+
+                    <div class="key-actions">
+                        <button id="save-keys-btn" class="btn btn-primary">💾 鍵を保存</button>
+                        <button id="download-public-btn" class="btn btn-secondary">⬇️ 公開鍵をダウンロード</button>
+                        <button id="download-secret-btn" class="btn btn-warning">⬇️ 秘密鍵をダウンロード</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- タブ2: 暗号化 -->
+            <section id="encrypt-tab" class="pgp-section">
+                <div class="section-title">🔒 テキスト・ファイルの暗号化</div>
+                
+                <div class="form-group">
+                    <label>受取人の公開鍵</label>
+                    <textarea id="recipient-public-key" placeholder="公開鍵をペーストしてください" class="key-textarea"></textarea>
+                    <button class="btn btn-secondary" onclick="document.getElementById('public-key-file-input').click()">📂 ファイルから読み込み</button>
+                    <input type="file" id="public-key-file-input" style="display: none;" accept=".asc,.txt,.pem">
+                </div>
+
+                <div class="form-group">
+                    <label>暗号化するテキスト</label>
+                    <textarea id="encrypt-text" placeholder="テキストを入力するか、下でファイルをアップロード"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>またはファイルをアップロード</label>
+                    <div class="file-upload-area" id="encrypt-file-area">
+                        <input type="file" id="encrypt-file-input" style="display: none;">
+                        <p>📂 ファイルをドラッグ&ドロップ<br>またはクリックして選択</p>
+                    </div>
+                    <small id="encrypt-file-name"></small>
+                </div>
+
+                <button id="encrypt-btn" class="btn btn-primary btn-large">🔒 暗号化</button>
+                <div id="encrypt-status" class="status-text"></div>
+
+                <div id="encrypt-result" class="result-section" style="display: none;">
+                    <h4>📄 暗号化されたテキスト</h4>
+                    <textarea id="encrypted-output" readonly class="result-textarea"></textarea>
+                    <div class="result-actions">
+                        <button class="btn btn-secondary" onclick="copyToClipboard('encrypted-output')">📋 コピー</button>
+                        <button class="btn btn-secondary" onclick="downloadText('encrypted-output', 'encrypted.asc')">⬇️ ダウンロード</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- タブ3: 復号化 -->
+            <section id="decrypt-tab" class="pgp-section">
+                <div class="section-title">🔓 暗号化テキスト・ファイルの復号化</div>
+                
+                <div class="form-group">
+                    <label>秘密鍵</label>
+                    <textarea id="secret-key-input" placeholder="秘密鍵をペーストしてください" class="key-textarea"></textarea>
+                    <button class="btn btn-secondary" onclick="document.getElementById('secret-key-file-input').click()">📂 ファイルから読み込み</button>
+                    <input type="file" id="secret-key-file-input" style="display: none;" accept=".asc,.txt,.pem">
+                </div>
+
+                <div class="form-group">
+                    <label>パスフレーズ</label>
+                    <input type="password" id="decrypt-passphrase" placeholder="秘密鍵のパスフレーズを入力">
+                </div>
+
+                <div class="form-group">
+                    <label>暗号化されたテキスト</label>
+                    <textarea id="decrypt-text" placeholder="暗号化されたテキストをペーストするか、下でファイルをアップロード"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>またはファイルをアップロード</label>
+                    <div class="file-upload-area" id="decrypt-file-area">
+                        <input type="file" id="decrypt-file-input" style="display: none;">
+                        <p>📂 ファイルをドラッグ&ドロップ<br>またはクリックして選択</p>
+                    </div>
+                    <small id="decrypt-file-name"></small>
+                </div>
+
+                <button id="decrypt-btn" class="btn btn-primary btn-large">🔓 復号化</button>
+                <div id="decrypt-status" class="status-text"></div>
+
+                <div id="decrypt-result" class="result-section" style="display: none;">
+                    <h4>📄 復号化されたテキスト</h4>
+                    <textarea id="decrypted-output" readonly class="result-textarea"></textarea>
+                    <div class="result-actions">
+                        <button class="btn btn-secondary" onclick="copyToClipboard('decrypted-output')">📋 コピー</button>
+                        <button class="btn btn-secondary" onclick="downloadText('decrypted-output', 'decrypted.txt')">⬇️ ダウンロード</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- タブ4: 鍵管理 -->
+            <section id="storage-tab" class="pgp-section">
+                <div class="section-title">💾 保存済み鍵の管理</div>
+                
+                <div class="storage-info">
+                    <p>LocalStorageに保存された鍵ペアを表示・管理できます。</p>
+                </div>
+
+                <div id="storage-list" class="storage-list">
+                    <div class="no-data">保存済みの鍵がありません</div>
+                </div>
+
+                <button id="clear-storage-btn" class="btn btn-danger" style="display: none; width: 100%; margin-top: 16px;">🗑️ すべての鍵を削除</button>
+            </section>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024-2025 <a href="https://github.com/math-u-t/tools">Tools Collection</a> | MIT License</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/openpgp@5.10.0/dist/openpgp.min.js"></script>
+    <script src="./script.js"></script>
+</body>
+</html>

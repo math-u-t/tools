@@ -43,7 +43,7 @@ function resetTimer() {
 
 function elapsed() {
   if (!running) return frozen;
-  return (Date.now() - t0) + (performance.now() - p0);
+  return (performance.now() - p0);
 }
 
 function updateTimer() {

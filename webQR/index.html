@@ -9,16 +9,8 @@
 </head>
 <body>
     <header>
-        <nav>
-            <h1><a href="../index.html">🛠️ Tools</a></h1>
-            <div class="nav-links">
-                <a href="../index.html">ホーム</a>
-                <a href="../getSource/index.html">HTMLソース取得</a>
-                <a href="../nowWatch/index.html">Now Watch</a>
-                <a href="../hashMaster/index.html">Hash Master</a>
-                <a href="../audioChange/index.html">Audio Change</a>
-            </div>
-        </nav>
+        <h1><a href="../index.html">🛠️ Tools</a></h1>
+        <p>QRコード読み取りツール</p>
     </header>
 
     <main>
@@ -28,16 +20,24 @@
                 <p>画面上のQRコードを読み取り</p>
             </div>
 
-            <!-- モード選択 -->
+            <!-- タブ選択 -->
             <div class="mode-selector">
                 <button class="mode-btn active" data-mode="camera">📷 カメラで読み取り</button>
                 <button class="mode-btn" data-mode="upload">📁 ファイルアップロード</button>
                 <button class="mode-btn" data-mode="screen">🖥️ 画面キャプチャ</button>
+                <button class="mode-btn" data-mode="screenshare">📺 画面共有</button>
             </div>
 
             <!-- カメラモード -->
             <section id="camera-mode" class="mode-section active">
                 <div class="section-title">📷 カメラで読み取り</div>
+                
+                <div class="form-group">
+                    <label>使用するカメラ</label>
+                    <select id="camera-select">
+                        <option value="">利用可能なカメラを検出中...</option>
+                    </select>
+                </div>
                 
                 <div class="camera-container">
                     <video id="video-element" playsinline></video>
@@ -88,6 +88,24 @@
                 </div>
 
                 <div id="screen-status" class="status-text"></div>
+            </section>
+
+            <!-- 画面共有モード -->
+            <section id="screenshare-mode" class="mode-section">
+                <div class="section-title">📺 画面共有で読み取り</div>
+                
+                <div class="screen-controls">
+                    <button id="screenshare-btn" class="btn btn-primary">🎬 画面共有開始</button>
+                    <button id="screenshare-stop-btn" class="btn btn-secondary" style="display: none;">⛔ 停止</button>
+                    <p class="screen-hint">別のウィンドウやタブに表示されたQRコードを読み取ります</p>
+                </div>
+
+                <div class="camera-container" id="screenshare-container" style="display: none;">
+                    <video id="screenshare-video" playsinline></video>
+                    <canvas id="screenshare-canvas" style="display: none;"></canvas>
+                </div>
+
+                <div id="screenshare-status" class="status-text"></div>
             </section>
 
             <!-- 結果表示 -->

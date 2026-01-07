@@ -3,13 +3,15 @@
 
 let currentMode = 'camera';
 let videoStream = null;
-let audioContext = null;
+let screenshareStream = null;
 let isReading = false;
+let availableCameras = [];
 const readHistory = [];
 
 // DOM要素
 const modeBtns = document.querySelectorAll('.mode-btn');
 const modeSections = document.querySelectorAll('.mode-section');
+const cameraSelect = document.getElementById('camera-select');
 const videoElement = document.getElementById('video-element');
 const canvasElement = document.getElementById('canvas-element');
 const startCameraBtn = document.getElementById('start-camera-btn');
@@ -24,6 +26,12 @@ const captureScreenBtn = document.getElementById('capture-screen-btn');
 const screenPreview = document.getElementById('screen-preview');
 const screenImage = document.getElementById('screen-image');
 const screenStatus = document.getElementById('screen-status');
+const screenshareBtn = document.getElementById('screenshare-btn');
+const screenshareStopBtn = document.getElementById('screenshare-stop-btn');
+const screenshareVideo = document.getElementById('screenshare-video');
+const screenshareCanvas = document.getElementById('screenshare-canvas');
+const screenshareContainer = document.getElementById('screenshare-container');
+const screenshareStatus = document.getElementById('screenshare-status');
 const resultContainer = document.getElementById('result-container');
 const resultActions = document.getElementById('result-actions');
 const copyResultBtn = document.getElementById('copy-result-btn');
@@ -36,6 +44,7 @@ const clearHistoryBtn = document.getElementById('clear-history-btn');
 document.addEventListener('DOMContentLoaded', () => {
     loadHistory();
     setupEventListeners();
+    detectCameras();
 });
 
 // イベントリスナー設定
@@ -50,6 +59,10 @@ function setupEventListeners() {
     // カメラ制御
     startCameraBtn.addEventListener('click', startCamera);
     stopCameraBtn.addEventListener('click', stopCamera);
+
+    // 画面共有制御
+    screenshareBtn.addEventListener('click', startScreenshare);
+    screenshareStopBtn.addEventListener('click', stopScreenshare);
 
     // ファイルアップロード
     fileInputBtn.addEventListener('click', () => fileInput.click());
@@ -103,6 +116,36 @@ function switchMode(mode) {
     if (mode !== 'camera' && videoStream) {
         stopCamera();
     }
+    
+    // スクリーンシェア停止
+    if (mode !== 'screenshare' && screenshareStream) {
+        stopScreenshare();
+    }
+}
+
+// ========== カメラ検出 ==========
+
+async function detectCameras() {
+    try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        availableCameras = devices.filter(device => device.kind === 'videoinput');
+        
+        cameraSelect.innerHTML = '';
+        if (availableCameras.length === 0) {
+            cameraSelect.innerHTML = '<option value="">利用可能なカメラがありません</option>';
+            return;
+        }
+        
+        availableCameras.forEach((camera, index) => {
+            const option = document.createElement('option');
+            option.value = camera.deviceId;
+            option.textContent = camera.label || `カメラ ${index + 1}`;
+            cameraSelect.appendChild(option);
+        });
+    } catch (error) {
+        console.error('カメラ検出エラー:', error);
+        cameraSelect.innerHTML = '<option value="">カメラアクセスエラー</option>';
+    }
 }
 
 // ========== カメラモード ==========
@@ -112,9 +155,19 @@ async function startCamera() {
         cameraStatus.textContent = '📷 カメラ起動中...';
         cameraStatus.className = 'status-text loading';
 
-        videoStream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: 'environment' },
-            audio: false
+        const selectedDeviceId = cameraSelect.value;
+        const constraints = {
+            audio: false,
+            video: {}
+        };
+
+        if (selectedDeviceId) {
+            constraints.video = { deviceId: { exact: selectedDeviceId } };
+        } else {
+            constraints.video = { facingMode: 'environment' };
+        }
+
+        videoStream = await navigator.mediaDevices.getUserMedia(constraints);
         });
 
         videoElement.srcObject = videoStream;
@@ -170,6 +223,75 @@ function readQRFromCamera() {
     }
 
     requestAnimationFrame(readQRFromCamera);
+}
+
+// ========== 画面共有モード ==========
+
+async function startScreenshare() {
+    try {
+        screenshareStatus.textContent = '📺 画面共有権限を要求中...';
+        screenshareStatus.className = 'status-text loading';
+
+        screenshareStream = await navigator.mediaDevices.getDisplayMedia({
+            video: { cursor: 'always' },
+            audio: false
+        });
+
+        screenshareVideo.srcObject = screenshareStream;
+        screenshareVideo.play();
+
+        screenshareContainer.style.display = 'block';
+        screenshareBtn.style.display = 'none';
+        screenshareStopBtn.style.display = 'inline-block';
+
+        screenshareStatus.textContent = '✅ 画面共有開始。QRコードをフレーム内に収めてください';
+        screenshareStatus.className = 'status-text success';
+
+        isReading = true;
+        readQRFromScreenshare();
+    } catch (error) {
+        screenshareStatus.textContent = `❌ エラー: ${error.message}`;
+        screenshareStatus.className = 'status-text error';
+        console.error('Screenshare error:', error);
+    }
+}
+
+function stopScreenshare() {
+    isReading = false;
+
+    if (screenshareStream) {
+        screenshareStream.getTracks().forEach(track => track.stop());
+        screenshareStream = null;
+    }
+
+    screenshareVideo.srcObject = null;
+    screenshareContainer.style.display = 'none';
+    screenshareBtn.style.display = 'inline-block';
+    screenshareStopBtn.style.display = 'none';
+    screenshareStatus.textContent = '';
+}
+
+function readQRFromScreenshare() {
+    if (!isReading) return;
+
+    const canvas = screenshareCanvas;
+    const ctx = canvas.getContext('2d');
+    canvas.width = screenshareVideo.videoWidth;
+    canvas.height = screenshareVideo.videoHeight;
+
+    ctx.drawImage(screenshareVideo, 0, 0);
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+    const code = jsQR(imageData.data, imageData.width, imageData.height);
+
+    if (code) {
+        displayResult(code.data);
+        isReading = false;
+        stopScreenshare();
+        return;
+    }
+
+    requestAnimationFrame(readQRFromScreenshare);
 }
 
 // ========== ファイルアップロードモード ==========
