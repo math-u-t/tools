@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>このページは存在しません</title>
+
+<!-- メタタグで自動リダイレクト -->
+<meta http-equiv="refresh" content="5;url=https://example.com">
+
+<style>
+  body {
+    font-family: sans-serif;
+    text-align: center;
+    padding-top: 50px;
+    background-color: #f4f4f4;
+  }
+  .message {
+    font-size: 1.2rem;
+    color: #333;
+  }
+</style>
+</head>
+<body>
+  <div class="message">
+    5秒後に <a href="https://math-u-t.github.io/tools">https://math-u-t.github.io/tools</a> に移動します...
+  </div>
+
+  <script>
+    // JavaScript版の安全リダイレクト（メタタグと重複可）
+    setTimeout(function() {
+      window.location.href = "https://math-u-t.github.io/tools";
+    }, 5000);
+  </script>
+</body>
+</html>
