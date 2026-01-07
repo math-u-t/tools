@@ -3,18 +3,38 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>getSource</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>getSource - HTMLソース取得ツール</title>
+  <link rel="stylesheet" href="../style.css">
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-  <div class="container">
-    <h1>View Source</h1>
-    <input id="url" placeholder="https://example.com" autofocus>
-    <button id="open">ソースを表示</button>
-    <div class="hint">URL を入力して Enter または ボタン</div>
-  </div>
+  <header>
+    <h1>getSource</h1>
+    <p>Webページのソースコードを表示します</p>
+  </header>
+
+  <nav>
+    <a href="/">ホーム</a>
+    <a href="/getSource/">getSource</a>
+    <a href="/nowWatch/">nowWatch</a>
+  </nav>
+
+  <main>
+    <div class="container">
+      <div class="tool-card">
+        <input id="url" type="url" placeholder="https://example.com" autofocus>
+        <button id="open" class="btn-primary">ソースコードを表示</button>
+        <div class="hint">URLを入力してEnterキーまたはボタンをクリック</div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    &copy; <a href="https://math-u-t.github.io">2026 math-u-t.github.io</a>
+  </footer>
+
   <script src="script.js"></script>
 </body>
 
