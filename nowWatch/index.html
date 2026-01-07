@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <title>高精度時計・タイマー・メモ</title>
+</head>
+
+<body>
+  <div class="container">
+    <!-- 時計 -->
+    <div class="card">
+      <div class="title">高精度時計</div>
+      <div id="clock" class="display">
+      </div>
+      <div id="clock-status" class="status">Copied</div>
+      <div class="buttons">
+        <button class="copy" onclick="copyText('clock')">コピー</button>
+      </div>
+    </div>
+    <!-- タイマー -->
+    <div class="card">
+      <div class="title">高精度タイマー（秒）</div>
+      <div id="timer" class="display">0.000</div>
+      <div id="timer-status" class="status">Copied</div>
+      <div class="buttons">
+        <button class="start" onclick="startTimer()">開始</button>
+        <button class="stop" onclick="stopTimer()">停止</button>
+        <button class="reset" onclick="resetTimer()">リセット</button>
+        <button class="copy" onclick="copyText('timer')">コピー</button>
+      </div>
+    </div>
+    <!-- メモ -->
+    <div class="card">
+      <div class="title">メモ</div>
+      <textarea id="memo">
+      </textarea>
+      <div id="memo-status" class="status">Copied</div>
+      <div class="buttons">
+        <button class="save" onclick="saveMemo()">保存</button>
+        <button class="clear" onclick="clearMemo()">クリア</button>
+        <button class="copy" onclick="copyText('memo')">コピー</button>
+      </div>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+
+</html>
