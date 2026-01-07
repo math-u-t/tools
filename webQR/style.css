@@ -1,0 +1,356 @@
+/* webQR - QRコード読み取りツール */
+
+/* コンテナ */
+.mode-selector {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+    margin: 24px 0;
+    padding: 16px;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+}
+
+.mode-btn {
+    padding: 10px 16px;
+    background: var(--bg-primary);
+    border: 2px solid var(--text-tertiary);
+    color: var(--text-primary);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.mode-btn:hover {
+    background: var(--bg-tertiary);
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.mode-btn.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+/* モードセクション */
+.mode-section {
+    display: none;
+    padding: 20px;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    margin: 20px 0;
+}
+
+.mode-section.active {
+    display: block;
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--primary);
+}
+
+/* カメラコンテナ */
+.camera-container {
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto 20px;
+    aspect-ratio: 4 / 3;
+    background: #000;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+#video-element {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.camera-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.focus-frame {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 70%;
+    max-width: 300px;
+    aspect-ratio: 1;
+    border: 3px solid var(--primary);
+    border-radius: 8px;
+    box-shadow: 
+        0 0 20px rgba(37, 99, 235, 0.5),
+        inset 0 0 20px rgba(37, 99, 235, 0.2);
+}
+
+.focus-frame::before,
+.focus-frame::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border: 3px solid var(--primary);
+}
+
+.focus-frame::before {
+    top: -8px;
+    left: -8px;
+    border-right: none;
+    border-bottom: none;
+}
+
+.focus-frame::after {
+    bottom: -8px;
+    right: -8px;
+    border-left: none;
+    border-top: none;
+}
+
+/* コントロールボタン */
+.camera-controls,
+.screen-controls {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 16px 0;
+}
+
+/* ファイルアップロードエリア */
+.file-upload-area {
+    padding: 40px 20px;
+    background: var(--bg-tertiary);
+    border: 3px dashed var(--primary);
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.file-upload-area:hover {
+    background: var(--bg-primary);
+    border-color: var(--primary);
+    box-shadow: 0 0 20px rgba(37, 99, 235, 0.2);
+}
+
+.upload-btn {
+    width: 100%;
+    padding: 12px 24px;
+    font-size: 16px;
+}
+
+.upload-hint,
+.screen-hint {
+    margin-top: 12px;
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+/* プレビュー画像 */
+.upload-preview {
+    margin: 20px 0;
+    padding: 16px;
+    background: var(--bg-tertiary);
+    border-radius: 8px;
+    max-width: 100%;
+}
+
+.upload-preview img,
+#screen-image {
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+    border-radius: 6px;
+    display: block;
+    margin: 0 auto;
+}
+
+/* ステータステキスト */
+.status-text {
+    margin: 12px 0;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.status-text.loading {
+    background: var(--info-bg);
+    color: var(--info-text);
+}
+
+.status-text.success {
+    background: var(--success-bg);
+    color: var(--success-text);
+}
+
+.status-text.error {
+    background: var(--error-bg);
+    color: var(--error-text);
+}
+
+/* 結果セクション */
+.result-section {
+    padding: 20px;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    margin: 20px 0;
+}
+
+.result-container {
+    background: var(--bg-tertiary);
+    border-radius: 6px;
+    padding: 20px;
+    margin: 12px 0;
+}
+
+.no-result {
+    text-align: center;
+    color: var(--text-secondary);
+    padding: 20px;
+}
+
+.result-content {
+    display: grid;
+    gap: 12px;
+}
+
+.result-item {
+    padding: 12px;
+    background: var(--bg-primary);
+    border-left: 4px solid var(--primary);
+    border-radius: 4px;
+}
+
+.result-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.result-value {
+    font-size: 16px;
+    color: var(--text-primary);
+    word-break: break-all;
+    font-family: 'Courier New', monospace;
+}
+
+.result-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 16px;
+}
+
+.result-actions .btn {
+    flex: 1;
+    min-width: 140px;
+}
+
+/* 履歴セクション */
+.history-section {
+    padding: 20px;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    margin: 20px 0;
+}
+
+.history-list {
+    display: grid;
+    gap: 12px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.no-history {
+    text-align: center;
+    color: var(--text-secondary);
+    padding: 20px;
+}
+
+.history-item {
+    padding: 12px;
+    background: var(--bg-tertiary);
+    border-radius: 6px;
+    border-left: 4px solid var(--primary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.history-item:hover {
+    background: var(--bg-primary);
+    transform: translateX(4px);
+}
+
+.history-time {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+}
+
+.history-text {
+    font-size: 14px;
+    color: var(--text-primary);
+    word-break: break-all;
+    font-family: 'Courier New', monospace;
+    max-height: 60px;
+    overflow: hidden;
+}
+
+.history-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+    justify-content: flex-end;
+}
+
+.history-btn {
+    padding: 4px 8px;
+    font-size: 12px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.history-btn:hover {
+    background: var(--primary-dark, #1d4ed8);
+}
+
+/* レスポンシブ */
+@media (max-width: 600px) {
+    .mode-selector {
+        grid-template-columns: 1fr;
+    }
+
+    .camera-container {
+        max-width: 100%;
+    }
+
+    .result-actions .btn {
+        min-width: auto;
+    }
+}

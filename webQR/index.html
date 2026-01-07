@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>webQR - QRコード読み取りツール</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <h1><a href="../index.html">🛠️ Tools</a></h1>
+            <div class="nav-links">
+                <a href="../index.html">ホーム</a>
+                <a href="../getSource/index.html">HTMLソース取得</a>
+                <a href="../nowWatch/index.html">Now Watch</a>
+                <a href="../hashMaster/index.html">Hash Master</a>
+                <a href="../audioChange/index.html">Audio Change</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="container">
+            <div class="page-header">
+                <h1>📱 webQR</h1>
+                <p>画面上のQRコードを読み取り</p>
+            </div>
+
+            <!-- モード選択 -->
+            <div class="mode-selector">
+                <button class="mode-btn active" data-mode="camera">📷 カメラで読み取り</button>
+                <button class="mode-btn" data-mode="upload">📁 ファイルアップロード</button>
+                <button class="mode-btn" data-mode="screen">🖥️ 画面キャプチャ</button>
+            </div>
+
+            <!-- カメラモード -->
+            <section id="camera-mode" class="mode-section active">
+                <div class="section-title">📷 カメラで読み取り</div>
+                
+                <div class="camera-container">
+                    <video id="video-element" playsinline></video>
+                    <canvas id="canvas-element" style="display: none;"></canvas>
+                    <div class="camera-overlay">
+                        <div class="focus-frame"></div>
+                    </div>
+                </div>
+
+                <div class="camera-controls">
+                    <button id="start-camera-btn" class="btn btn-primary">🎬 カメラ起動</button>
+                    <button id="stop-camera-btn" class="btn btn-secondary" style="display: none;">⛔ 停止</button>
+                </div>
+
+                <div id="camera-status" class="status-text"></div>
+            </section>
+
+            <!-- ファイルアップロードモード -->
+            <section id="upload-mode" class="mode-section">
+                <div class="section-title">📁 ファイルアップロード</div>
+                
+                <div class="file-upload-area">
+                    <input id="file-input" type="file" accept="image/*" style="display: none;">
+                    <button id="file-input-btn" class="btn btn-primary upload-btn">
+                        📂 ファイルを選択
+                    </button>
+                    <p class="upload-hint">またはドラッグ&ドロップ</p>
+                </div>
+
+                <div id="upload-preview" class="upload-preview" style="display: none;">
+                    <img id="preview-image" src="" alt="プレビュー">
+                </div>
+
+                <div id="upload-status" class="status-text"></div>
+            </section>
+
+            <!-- 画面キャプチャモード -->
+            <section id="screen-mode" class="mode-section">
+                <div class="section-title">🖥️ 画面キャプチャ</div>
+                
+                <div class="screen-controls">
+                    <button id="capture-screen-btn" class="btn btn-primary">📸 画面キャプチャ</button>
+                    <p class="screen-hint">QRコードが表示されている領域をキャプチャしてください</p>
+                </div>
+
+                <div id="screen-preview" class="upload-preview" style="display: none;">
+                    <img id="screen-image" src="" alt="キャプチャ画像">
+                </div>
+
+                <div id="screen-status" class="status-text"></div>
+            </section>
+
+            <!-- 結果表示 -->
+            <section class="result-section">
+                <div class="section-title">📊 読み取り結果</div>
+                
+                <div id="result-container" class="result-container">
+                    <div class="no-result">
+                        <p>QRコードを読み取ると結果がここに表示されます</p>
+                    </div>
+                </div>
+
+                <div id="result-actions" class="result-actions" style="display: none;">
+                    <button id="copy-result-btn" class="btn btn-secondary">📋 コピー</button>
+                    <button id="open-result-btn" class="btn btn-secondary">🔗 リンク開く</button>
+                    <button id="clear-result-btn" class="btn btn-secondary">🗑️ クリア</button>
+                </div>
+            </section>
+
+            <!-- 履歴 -->
+            <section class="history-section">
+                <div class="section-title">📜 読み取り履歴</div>
+                
+                <div id="history-list" class="history-list">
+                    <div class="no-history">履歴なし</div>
+                </div>
+                
+                <button id="clear-history-btn" class="btn btn-danger" style="display: none; width: 100%; margin-top: 12px;">📝 履歴をクリア</button>
+            </section>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024-2025 <a href="https://github.com/math-u-t/tools">Tools Collection</a> | MIT License</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="./script.js"></script>
+</body>
+</html>

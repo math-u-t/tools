@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>hashMaster - マルチツール</title>
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <header>
+    <h1>hashMaster</h1>
+    <p>ハッシュ生成・パスワード・ランダムテキストの統合ツール</p>
+  </header>
+
+  <nav>
+    <a href="/">ホーム</a>
+    <a href="/getSource/">getSource</a>
+    <a href="/nowWatch/">nowWatch</a>
+    <a href="/hashMaster/">hashMaster</a>
+    <a href="/audioChange/">audioChange</a>
+    <a href="/webQR/">webQR</a>
+  </nav>
+
+  <main>
+    <div class="container">
+      <!-- タブナビゲーション -->
+      <div class="tabs-header">
+        <button class="tab-button active" data-tab="hash-mixer">
+          <span>🔐</span> ハッシュミキサー
+        </button>
+        <button class="tab-button" data-tab="password-gen">
+          <span>🔑</span> パスワード生成
+        </button>
+        <button class="tab-button" data-tab="random-text">
+          <span>🎲</span> ランダムテキスト
+        </button>
+      </div>
+
+      <!-- ハッシュミキサータブ -->
+      <div id="hash-mixer" class="tab-content active">
+        <div class="tool-card">
+          <h2>ハッシュミキサー</h2>
+          <p class="description">テキストをSHA256・SHA512・Base64に変換します</p>
+
+          <label for="hash-input">入力テキスト</label>
+          <textarea id="hash-input" placeholder="テキストを入力してください..." autofocus></textarea>
+
+          <div class="hash-grid">
+            <div class="hash-item">
+              <label>SHA256</label>
+              <input type="text" id="sha256-output" readonly>
+              <button class="copy-btn" onclick="copyHash('sha256-output')">コピー</button>
+            </div>
+
+            <div class="hash-item">
+              <label>SHA512</label>
+              <input type="text" id="sha512-output" readonly>
+              <button class="copy-btn" onclick="copyHash('sha512-output')">コピー</button>
+            </div>
+
+            <div class="hash-item">
+              <label>Base64</label>
+              <input type="text" id="base64-output" readonly>
+              <button class="copy-btn" onclick="copyHash('base64-output')">コピー</button>
+            </div>
+          </div>
+
+          <div class="status-message" id="hash-status"></div>
+        </div>
+      </div>
+
+      <!-- パスワード生成タブ -->
+      <div id="password-gen" class="tab-content">
+        <div class="tool-card">
+          <h2>パスワード生成</h2>
+          <p class="description">安全で強力なパスワードを自動生成します</p>
+
+          <div class="settings">
+            <div class="setting-group">
+              <label for="password-length">パスワード長: <span id="length-value">16</span></label>
+              <input type="range" id="password-length" min="8" max="64" value="16">
+            </div>
+
+            <div class="checkbox-group">
+              <label>
+                <input type="checkbox" id="use-uppercase" checked> 大文字 (A-Z)
+              </label>
+              <label>
+                <input type="checkbox" id="use-lowercase" checked> 小文字 (a-z)
+              </label>
+              <label>
+                <input type="checkbox" id="use-numbers" checked> 数字 (0-9)
+              </label>
+              <label>
+                <input type="checkbox" id="use-symbols" checked> 記号 (!@#$%^&*)
+              </label>
+            </div>
+          </div>
+
+          <div class="password-display">
+            <input type="text" id="password-output" readonly placeholder="ここにパスワードが表示されます">
+            <button class="btn-copy" onclick="copyPassword()">コピー</button>
+          </div>
+
+          <button class="btn-generate" onclick="generatePassword()">パスワード生成</button>
+
+          <div class="strength-meter">
+            <div class="strength-label">強度: <span id="strength-text">中程度</span></div>
+            <div class="strength-bar">
+              <div class="strength-fill" id="strength-fill"></div>
+            </div>
+          </div>
+
+          <div class="status-message" id="password-status"></div>
+        </div>
+      </div>
+
+      <!-- ランダムテキストタブ -->
+      <div id="random-text" class="tab-content">
+        <div class="tool-card">
+          <h2>ランダムテキスト生成</h2>
+          <p class="description">カスタマイズ可能なランダムテキストを生成します</p>
+
+          <div class="settings">
+            <div class="setting-group">
+              <label for="text-type">テキストタイプ</label>
+              <select id="text-type">
+                <option value="alphanumeric">英数字 (A-Z, a-z, 0-9)</option>
+                <option value="alpha">アルファベット (A-Z, a-z)</option>
+                <option value="lowercase">小文字 (a-z)</option>
+                <option value="uppercase">大文字 (A-Z)</option>
+                <option value="numbers">数字 (0-9)</option>
+                <option value="hex">16進数 (0-9, A-F)</option>
+                <option value="custom">カスタム</option>
+              </select>
+            </div>
+
+            <div class="setting-group" id="custom-chars-group" style="display: none;">
+              <label for="custom-characters">カスタム文字セット</label>
+              <input type="text" id="custom-characters" placeholder="使用する文字を入力">
+            </div>
+
+            <div class="setting-group">
+              <label for="text-length">テキスト長: <span id="text-length-value">50</span></label>
+              <input type="range" id="text-length" min="1" max="500" value="50">
+            </div>
+
+            <div class="setting-group">
+              <label for="line-count">行数</label>
+              <input type="number" id="line-count" min="1" max="50" value="1">
+            </div>
+
+            <div class="checkbox-group">
+              <label>
+                <input type="checkbox" id="uppercase-output"> 出力を大文字に
+              </label>
+            </div>
+          </div>
+
+          <button class="btn-generate" onclick="generateRandomText()">テキスト生成</button>
+
+          <div class="output-section">
+            <textarea id="text-output" readonly placeholder="ここにランダムテキストが表示されます..."></textarea>
+            <button class="btn-copy" onclick="copyText()">コピー</button>
+          </div>
+
+          <div class="status-message" id="random-status"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    &copy; <a href="https://math-u-t.github.io">2026 math-u-t.github.io</a>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
